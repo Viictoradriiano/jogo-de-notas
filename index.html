@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Treino Musical V2.1</title>
+    <title>Treino Musical V2.4</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,21 +23,21 @@
 
     <div id="app">
         <div id="screen-menu" class="screen active">
-            <div class="menu-logo">Treino Musical V2.1</div>
-            <p class="menu-sub">Identifique as Notas e os Tempos no compasso Quaternário (4/4)</p>
+            <div class="menu-logo">Treino Musical V2</div>
+            <div class="menu-sub">Identifique as Notas, os Tempos e o Compasso no relógio!</div>
             
             <div class="clef-grid">
-                <div class="clef-card" id="btn-clef-sol" role="button" tabindex="0">
+                <div class="clef-card" id="btn-clef-sol">
                     <div class="clef-symbol">𝄞</div>
                     <div class="clef-name">Sol</div>
                     <div class="clef-sub">Pauta aguda</div>
                 </div>
-                <div class="clef-card" id="btn-clef-fa" role="button" tabindex="0">
+                <div class="clef-card" id="btn-clef-fa">
                     <div class="clef-symbol">𝄢</div>
                     <div class="clef-name">Fá</div>
                     <div class="clef-sub">Pauta grave</div>
                 </div>
-                <div class="clef-card" id="btn-clef-do" role="button" tabindex="0">
+                <div class="clef-card" id="btn-clef-do">
                     <div class="clef-symbol">𝄡</div>
                     <div class="clef-name">Dó</div>
                     <div class="clef-sub">Pauta média</div>
@@ -45,23 +45,26 @@
             </div>
             
             <div class="menu-hint">
-                <span class="menu-hint-icon">🎯</span>
-                <span>Preencha o <b>Nome da Nota</b> e a <b>Duração (Tempo)</b> correspondente a cada figura gerada!</span>
+                🎯 Preencha o Compasso, o Nome e a Duração de cada figura gerada!
             </div>
         </div>
 
         <div id="screen-game" class="screen">
             <div class="game-header">
-                <button class="btn-back" id="btn-back-menu">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <polyline points="15 18 9 12 15 6"/>
-                    </svg>
-                    Menu
-                </button>
-                <div class="header-center">
-                    <span class="level-badge" id="level-badge">Nível 1</span>
-                    <span class="session-stats" id="session-stats">0 ✓ · 0 ✗</span>
+                <button class="btn-back" id="btn-back-menu">← Menu</button>
+                
+                <div class="timer-container">
+                    <div id="timer-text" class="timer-text">30s</div>
+                    <div class="timer-bar">
+                        <div id="timer-bar-fill" class="timer-bar-fill"></div>
+                    </div>
                 </div>
+
+                <div class="header-center">
+                    <div class="level-badge" id="level-badge">Nível 1</div>
+                    <div class="session-stats" id="session-stats">0 ✓ · 0 ✗</div>
+                </div>
+                
                 <div class="streak-counter">
                     <div class="streak-pip" id="pip0"></div>
                     <div class="streak-pip" id="pip1"></div>
@@ -75,32 +78,45 @@
 
             <div class="staff-wrapper">
                 <div class="pentagrama" id="pentagrama">
-                    <div class="linha"></div><div class="linha"></div>
-                    <div class="linha"></div><div class="linha"></div>
-                    <div class="linha"></div>
+                    <div class="linha"></div><div class="linha"></div><div class="linha"></div><div class="linha"></div><div class="linha"></div>
                     <div class="clave" id="clave-symbol"></div>
-                    <div class="time-signature"><span>4</span><span>4</span></div>
+                    <div class="time-signature">
+                        <span id="ts-top">?</span><span id="ts-bottom">?</span>
+                    </div>
                 </div>
+            </div>
+
+            <div class="compass-wrapper">
+                <div class="slot slot-compass" id="slot-compass" onclick="handleSlotSelection('compass', 'compass')">? / ?</div>
+                <div style="font-size: 11px; color: var(--color-warning); font-weight: bold; margin-top: 4px; text-transform: uppercase;">Compasso</div>
             </div>
 
             <div id="slots-container"></div>
 
-            <div class="keyboard-section">
+            <fieldset class="keyboard-section">
+                <div class="keyboard-label" style="color: var(--color-warning);">Compasso (Soma dos Tempos)</div>
+                <div class="key-row" id="compass-keyboard-row">
+                    <button class="btn-key btn-compass-key" onclick="handleCompassAnswer('2/4')">2/4</button>
+                    <button class="btn-key btn-compass-key" onclick="handleCompassAnswer('3/4')">3/4</button>
+                    <button class="btn-key btn-compass-key" onclick="handleCompassAnswer('4/4')">4/4</button>
+                    <button class="btn-key btn-compass-key" onclick="handleCompassAnswer('6/8')">6/8</button>
+                </div>
+
                 <div class="keyboard-label">Notas</div>
                 <div class="key-row" id="notes-keyboard-row"></div>
                 
-                <div class="keyboard-label" style="margin-top: var(--space-4); color: var(--color-pause);">Pausas</div>
+                <div class="keyboard-label" style="color: var(--color-pause);">Pausas</div>
                 <div class="key-row" id="pauses-keyboard-row"></div>
                 
-                <div class="keyboard-label" style="margin-top: var(--space-4); color: var(--color-time);">Duração (Tempos)</div>
+                <div class="keyboard-label" style="color: var(--color-time);">Duração (Tempos)</div>
                 <div class="key-row" id="time-keyboard-row"></div>
-            </div>
+            </fieldset>
 
             <div class="actions-row">
                 <button class="btn-action btn-end" id="btn-end-session">Terminar</button>
                 <button class="btn-action btn-verify" id="btn-verify-answers">Verificar ✓</button>
             </div>
-
+            
             <div id="message-area" aria-live="polite"></div>
         </div>
 
@@ -109,9 +125,11 @@
                 <div class="summary-emoji" id="summary-emoji">🎉</div>
                 <div class="summary-title" id="summary-title">Sessão concluída!</div>
                 <p class="summary-sub" id="summary-sub">Aqui está o seu resumo</p>
+                
                 <div class="progress-bar-wrap">
                     <div class="progress-bar-fill" id="summary-bar"></div>
                 </div>
+                
                 <div class="stats-grid">
                     <div class="stat-box">
                         <div class="stat-value success" id="stat-acertos">0</div>
