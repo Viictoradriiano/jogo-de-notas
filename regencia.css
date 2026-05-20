@@ -1,0 +1,73 @@
+:root {
+    --font-display: 'Instrument Serif', Georgia, serif;
+    --font-body: 'DM Sans', sans-serif;
+    --bg: #110f0e; --surface: #1a1816; --border: #2e2b27;
+    --text: #e8e6e1; --primary: #9b7ff0; --success: #5baa6e;
+    --error: #e5696f; --warn: #e8a633;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-body); background: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 20px; min-height: 100vh; user-select: none; touch-action: none; overflow: hidden; }
+#app { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 15px; }
+
+.screen { display: none; flex-direction: column; gap: 15px; width: 100%; animation: fadeUp 0.3s; }
+.screen.active { display: flex; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.game-header { display: flex; justify-content: space-between; align-items: center; }
+.btn-back { color: var(--text); text-decoration: none; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; cursor: pointer; background: none; }
+.badge { background: #2d2545; color: var(--primary); padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; text-transform: uppercase; }
+.score-box { font-size: 14px; color: var(--warn); font-weight: bold; }
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+.card-title { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; font-weight: 600; }
+
+.formula-grid { display: flex; gap: 10px; }
+.formula-btn { flex: 1; padding: 15px 5px; border-radius: 12px; border: 2px solid var(--border); background: var(--surface); color: var(--text); font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+.formula-num { font-family: var(--font-display); font-size: 36px; display: block; margin-bottom: 2px; color: var(--primary); }
+.formula-btn.selected { border-color: var(--primary); background: #2d2545; }
+
+.instruction-box { background: var(--surface); padding: 12px; border-radius: 10px; font-size: 13px; text-align: center; border: 1px solid var(--border); color: #aaa; }
+
+/* NOVA ÁREA DE GESTOS */
+.gesture-zone { position: relative; width: 100%; height: 360px; background: radial-gradient(circle, #1a1816 0%, #0b0a0a 100%); border-radius: 16px; border: 2px dashed var(--border); overflow: hidden; display: flex; justify-content: center; align-items: center; margin-top: 10px; cursor: grab; }
+.gesture-zone:active { cursor: grabbing; border-color: var(--primary); }
+.swipe-hint { position: absolute; top: 15px; font-size: 12px; color: #555; text-transform: uppercase; letter-spacing: 2px; }
+
+.arrow-container { position: relative; width: 200px; height: 200px; pointer-events: none; }
+.arrow { position: absolute; font-size: 32px; opacity: 0.1; transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; justify-content: center; align-items: center; }
+.arrow-up { top: 0; left: 50%; transform: translateX(-50%); }
+.arrow-down { bottom: 0; left: 50%; transform: translateX(-50%); }
+.arrow-left { top: 50%; left: 0; transform: translateY(-50%); }
+.arrow-right { top: 50%; right: 0; transform: translateY(-50%); }
+
+.center-beat { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: var(--font-display); font-size: 64px; color: var(--border); font-weight: bold; transition: 0.1s; }
+
+/* Estados das Setas */
+.arrow.target { opacity: 0.8; color: var(--primary); text-shadow: 0 0 20px var(--primary); transform: scale(1.4) translateX(-35%); }
+.arrow.target.arrow-up { transform: scale(1.4) translateX(-35%) translateY(10px); }
+.arrow.target.arrow-down { transform: scale(1.4) translateX(-35%) translateY(-10px); }
+.arrow.hit-success { opacity: 1; filter: drop-shadow(0 0 10px var(--success)); transform: scale(1.6) translateX(-35%); }
+.arrow.hit-error { opacity: 1; filter: drop-shadow(0 0 10px var(--error)); transform: scale(1.2) translateX(-35%); }
+
+.feedback { text-align: center; font-size: 20px; font-weight: bold; font-family: var(--font-display); height: 28px; color: var(--warn); letter-spacing: 1px; text-transform: uppercase; margin-top: 5px; transition: 0.2s; }
+
+.btn { width: 100%; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: bold; border: none; cursor: pointer; transition: 0.15s; font-family: var(--font-body); }
+.btn:active { transform: scale(0.98); }
+.btn-success { background: var(--success); color: white; }
+.btn-primary { background: var(--primary); color: white; }
+.btn-outline { background: transparent; color: var(--text); border: 2px solid var(--border); }
+
+.summary-card { background: var(--surface); padding: 25px; border-radius: 16px; border: 1px solid var(--border); text-align: center; }
+.summary-emoji { font-size: 48px; }
+.summary-title { font-family: var(--font-display); font-size: 26px; color: var(--primary); margin: 5px 0; }
+.summary-pct { font-size: 52px; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
+.stats-row { display: flex; gap: 12px; justify-content: center; }
+.stat-box { background: #211f1d; padding: 12px; border-radius: 10px; width: 110px; border: 1px solid var(--border); }
+.stat-val { font-size: 26px; font-weight: bold; }
+.advice-box { background: #211f1d; border: 1px solid var(--primary); padding: 14px; border-radius: 10px; font-size: 13.5px; line-height: 1.5; }
+
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
+.modal-overlay.active { display: flex; }
+.modal-box { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 25px; width: 90%; max-width: 400px; text-align: center; }
+.modal-title { font-family: var(--font-display); font-size: 30px; color: var(--primary); margin-bottom: 15px; }
+.modal-body { text-align: left; font-size: 14.5px; line-height: 1.6; margin-bottom: 20px; }

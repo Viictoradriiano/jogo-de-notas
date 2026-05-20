@@ -38,12 +38,17 @@ const CLEFS = {
 };
 
 const GAME_LEVELS = [
-    {id: 1, figuras: ['semibreve', 'minima']},
-    {id: 2, figuras: ['semibreve', 'minima', 'seminima']},
-    {id: 3, figuras: ['minima', 'seminima', 'pausa_minima', 'pausa_seminima']},
-    {id: 4, figuras: ['seminima', 'colcheia', 'pausa_seminima']},
-    {id: 5, figuras: ['seminima', 'colcheia', 'pausa_seminima', 'pausa_colcheia']},
-    {id: 6, figuras: ['seminima', 'colcheia', 'semicolcheia', 'pausa_colcheia', 'pausa_semicolcheia']}
+    {id: 1, figuras: ['semibreve', 'minima'], compassos: ['2/4', '3/4', '4/4']},
+    {id: 2, figuras: ['semibreve', 'minima', 'seminima'], compassos: ['2/4', '3/4', '4/4']},
+    {id: 3, figuras: ['minima', 'seminima', 'pausa_minima', 'pausa_seminima'], compassos: ['2/4', '3/4', '4/4']},
+    {id: 4, figuras: ['seminima', 'colcheia', 'pausa_seminima'], compassos: ['2/4', '3/4', '4/4']},
+    {id: 5, figuras: ['seminima', 'colcheia', 'pausa_seminima', 'pausa_colcheia'], compassos: ['2/4', '3/4', '4/4']},
+    {
+        id: 6, 
+        figuras: ['seminima', 'colcheia', 'semicolcheia', 'pausa_colcheia', 'pausa_semicolcheia'],
+        compassos: ['2/4', '3/4', '4/4', '6/8', '9/8', '12/8'],
+        mensagemFase: "⚠️ Atenção! Você chegou à Fase dos Compassos Compostos.\n\nA partir de agora, o valor das figuras muda dependendo do compasso.\n\nLembre-se: em compassos com denominador 8, a Colcheia passa a valer 1 movimento!"
+    }
 ];
 
 const PAUSE_SYMBOLS = {
@@ -58,13 +63,22 @@ const NOTE_NAMES = {
     dó: 'Dó', ré: 'Ré', mi: 'Mi', fá: 'Fá', sol: 'Sol', lá: 'Lá', si: 'Si'
 };
 
-const TIME_STRINGS = {
-    'semibreve': '4t', 'pausa_semibreve': '4t', 
-    'minima': '2t', 'pausa_minima': '2t', 
-    'seminima': '1t', 'pausa_seminima': '1t', 
-    'colcheia': '½t', 'pausa_colcheia': '½t', 
-    'semicolcheia': '¼t', 'pausa_semicolcheia': '¼t'
-};
+// Função que calcula dinamicamente o valor das figuras com base na fórmula de compasso
+function calcularValorFigura(nomeFigura, formulaCompasso) {
+    const denominador = parseInt(formulaCompasso.split('/')[1]);
+    const equivalencia = {
+        'semibreve': 1, 'pausa_semibreve': 1, 'minima': 2, 'pausa_minima': 2,
+        'seminima': 4, 'pausa_seminima': 4, 'colcheia': 8, 'pausa_colcheia': 8,
+        'semicolcheia': 16, 'pausa_semicolcheia': 16
+    };
+    
+    let valorCalculado = denominador / equivalencia[nomeFigura];
+    
+    if (valorCalculado === 0.5) return '½t';
+    if (valorCalculado === 0.25) return '¼t';
+    if (valorCalculado === 1.5) return '1½t';
+    return valorCalculado + 't';
+}
 
 // Variáveis de Jogo
 let currentClef, currentLevel = 1, streak = 0, totalRight = 0, totalWrong = 0;
@@ -92,6 +106,26 @@ function initTheme() {
 }
 initTheme();
 
+// Lógica do Modal de Avisos
+function openModal(msg) {
+    const modalText = document.getElementById('modal-text');
+    const modalWarning = document.getElementById('modal-warning');
+    if (modalText && modalWarning) {
+        modalText.innerText = msg;
+        modalWarning.classList.add('active');
+    }
+}
+
+function closeModal() {
+    const modalWarning = document.getElementById('modal-warning');
+    if (modalWarning) {
+        modalWarning.classList.remove('active');
+    }
+    startTimer();
+}
+
+window.closeModal = closeModal; // Garante que o botão no HTML encontre a função
+
 // Áudio Básico
 let audioCtx = null;
 function getCtx() {
@@ -117,21 +151,34 @@ function sfxUp() { [523, 587, 659, 784, 1047].forEach((f, i) => setTimeout(() =>
 function sfxErr() { tone(220, 0.07, 'square', 0.08); setTimeout(() => tone(180, 0.15, 'square', 0.06), 90); }
 function sfxClick() { tone(800, 0.05, 'sine', 0.05); }
 
-// Renderização dos Teclados
+// Renderização dos Teclados Dinâmicos
 function renderKeys() {
     const nr = document.getElementById('notes-keyboard-row');
     const pr = document.getElementById('pauses-keyboard-row');
+    const cr = document.getElementById('compass-keyboard-row');
     const tr = document.getElementById('time-keyboard-row');
     
-    ['dó', 'ré', 'mi', 'fá', 'sol', 'lá', 'si'].forEach(n => { 
-        nr.innerHTML += `<button class="btn-key" onclick="handlePitch('${n}')">${n}</button>`; 
+    // As notas são estáticas, então só renderizamos na primeira vez
+    if (nr.innerHTML === '') {
+        ['dó', 'ré', 'mi', 'fá', 'sol', 'lá', 'si'].forEach(n => { 
+            nr.innerHTML += `<button class="btn-key" onclick="handlePitch('${n}')">${n}</button>`; 
+        });
+        
+        ['pausa_semibreve', 'pausa_minima', 'pausa_seminima', 'pausa_colcheia', 'pausa_semicolcheia'].forEach(p => { 
+            pr.innerHTML += `<button class="btn-key btn-pause" onclick="handlePitch('${p}')">${NOTE_NAMES[p]}</button>`; 
+        });
+    }
+    
+    // Os botões de compasso mudam de acordo com o nível atual
+    cr.innerHTML = '';
+    const levelCompassos = GAME_LEVELS[currentLevel - 1].compassos;
+    levelCompassos.forEach(c => {
+        cr.innerHTML += `<button class="btn-key btn-compass-key" onclick="handleCompassAnswer('${c}')">${c}</button>`;
     });
     
-    ['pausa_semibreve', 'pausa_minima', 'pausa_seminima', 'pausa_colcheia', 'pausa_semicolcheia'].forEach(p => { 
-        pr.innerHTML += `<button class="btn-key btn-pause" onclick="handlePitch('${p}')">${NOTE_NAMES[p]}</button>`; 
-    });
-    
-    ['4t', '2t', '1t', '½t', '¼t'].forEach(t => { 
+    // Botões de tempo completos
+    tr.innerHTML = '';
+    ['4t', '3t', '2t', '1½t', '1t', '½t', '¼t'].forEach(t => { 
         tr.innerHTML += `<button class="btn-key btn-time-key" onclick="handleTime('${t}')">${t}</button>`; 
     });
 }
@@ -160,7 +207,10 @@ function startTimer() {
     updateTimerUI();
     
     matchTimer = setInterval(() => {
-        if (isAnimating) return; 
+        // Se estiver animando ou com o modal aberto, o tempo pausa
+        const modalWarning = document.getElementById('modal-warning');
+        if (isAnimating || (modalWarning && modalWarning.classList.contains('active'))) return; 
+        
         timeLeft--;
         updateTimerUI();
         
@@ -192,7 +242,7 @@ function updateTimerUI() {
 function setInteraction(en) {
     isAnimating = !en;
     document.querySelectorAll('button').forEach(b => {
-        if (b.id !== 'theme-toggle' && b.id !== 'btn-back-menu' && b.id !== 'btn-return-menu') {
+        if (!['theme-toggle', 'btn-back-menu', 'btn-return-menu'].includes(b.id) && !b.closest('#modal-warning')) {
             b.disabled = !en;
         }
     });
@@ -237,17 +287,20 @@ function getTicks(f) {
 function genSeq() {
     clearTimeout(nextTimer);
     setInteraction(true);
+    renderKeys(); // Atualiza os botões dinâmicos dependendo do nível
     startTimer();
     
     document.getElementById('message-area').innerHTML = '';
     document.querySelectorAll('.nota-wrapper, .pausa-texto, .linha-suplementar').forEach(e => e.remove());
 
-    // Sorteia Compasso com o 6/8 incluído
-    const compassosPossiveis = ['2/4', '3/4', '4/4', '6/8'];
+    // Sorteia Compasso de acordo com o nível atual
+    const compassosPossiveis = GAME_LEVELS[currentLevel - 1].compassos;
     targetCompass = compassosPossiveis[Math.floor(Math.random() * compassosPossiveis.length)];
     
-    // Calcula os Ticks do Compasso (6/8 e 3/4 têm ambos 12 ticks)
-    let rem = targetCompass === '6/8' ? 12 : parseInt(targetCompass.split('/')[0]) * 4; 
+    // Calcula os Ticks dinâmicos do Compasso
+    const num = parseInt(targetCompass.split('/')[0]);
+    const den = parseInt(targetCompass.split('/')[1]);
+    let rem = num * (16 / den);
 
     const allowed = GAME_LEVELS[currentLevel - 1].figuras;
     const figs = [];
@@ -293,7 +346,7 @@ function genSeq() {
             figura: fig, 
             pitch: note, 
             ansPitch: isP ? fig : note.nome, 
-            ansTime: TIME_STRINGS[fig]
+            ansTime: calcularValorFigura(fig, targetCompass) // <-- Aplica o cálculo matemático
         });
 
         if (isP) {
@@ -510,7 +563,7 @@ function verify() {
     const sc = document.getElementById('slot-compass');
     let isCompassCorrect = false;
 
-    // Regra: Aceita 3/4 e 6/8 como corretos entre si, pois ambos possuem a mesma duração de 12 ticks
+    // Regra: Aceita compostos ou simples equivalentes se tiverem o mesmo número de ticks totais
     if (ansCompass === targetCompass) {
         isCompassCorrect = true;
     } else if ((ansCompass === '3/4' || ansCompass === '6/8') && (targetCompass === '3/4' || targetCompass === '6/8')) {
@@ -528,10 +581,10 @@ function verify() {
         document.getElementById('ts-top').textContent = targetCompass.split('/')[0];
         document.getElementById('ts-bottom').textContent = targetCompass.split('/')[1];
         if (!compassEvaluated) { totalWrong++; compassEvaluated = true; }
-        errHTML += `<div class="msg-error-item">❌ <b>Compasso:</b> Era <b>${targetCompass}</b>. A soma revela a fórmula.</div>`;
+        errHTML += `<div class="msg-error-item">❌ <b>Compasso:</b> Era <b>${targetCompass}</b>. A soma revela a fórmula correta.</div>`;
     }
 
-    // Avalia Notas e Tempos
+    // Avalia Notas e Tempos com Explicações Pedagógicas
     for (let i = 0; i < currentSeq.length; i++) {
         let okP = ansPitch[i] === currentSeq[i].ansPitch;
         let okT = ansTime[i] === currentSeq[i].ansTime;
@@ -545,11 +598,17 @@ function verify() {
             allOk = false;
             if (!evaluated[i]) { totalWrong++; evaluated[i] = true; }
             
-            let name = NOTE_NAMES[currentSeq[i].ansPitch] || currentSeq[i].ansPitch;
+            let noteName = NOTE_NAMES[currentSeq[i].ansPitch] || currentSeq[i].ansPitch;
+            let figName = currentSeq[i].figura.replace('pausa_', 'Pausa de ');
+            figName = figName.charAt(0).toUpperCase() + figName.slice(1);
             
-            if (!okP && !okT) errHTML += `<div class="msg-error-item">❌ Caixa ${i + 1}: Era <b>${name}</b> valendo <b>${currentSeq[i].ansTime}</b>.</div>`;
-            else if (!okP) errHTML += `<div class="msg-error-item">❌ Caixa ${i + 1}: Nota errada. Era <b>${name}</b>.</div>`;
-            else if (!okT) errHTML += `<div class="msg-error-item">❌ Caixa ${i + 1}: Tempo errado. Era <b>${currentSeq[i].ansTime}</b>.</div>`;
+            if (!okP && !okT) {
+                errHTML += `<div class="msg-error-item">❌ Caixa ${i + 1}: Era <b>${noteName}</b> valendo <b>${currentSeq[i].ansTime}</b>.<small>Com o denominador ${targetCompass.split('/')[1]}, a figura ${figName} passa a valer ${currentSeq[i].ansTime}.</small></div>`;
+            } else if (!okP) {
+                errHTML += `<div class="msg-error-item">❌ Caixa ${i + 1}: Nota errada. Era <b>${noteName}</b>.</div>`;
+            } else if (!okT) {
+                errHTML += `<div class="msg-error-item">❌ Caixa ${i + 1}: Tempo errado. Era <b>${currentSeq[i].ansTime}</b>.<small>Atenção ao compasso (${targetCompass}). A figura ${figName} recebe o valor de ${currentSeq[i].ansTime}.</small></div>`;
+            }
         }
     }
     
@@ -571,6 +630,13 @@ function verify() {
             updateStats();
             msg += `<div class="msg-level-up">🚀 Avançou para o Nível ${currentLevel}!</div>`;
             confetti();
+            
+            // Verifica se o novo nível precisa abrir o aviso (Nível 6)
+            const levelData = GAME_LEVELS.find(l => l.id === currentLevel);
+            if (levelData && levelData.mensagemFase) {
+                clearInterval(matchTimer); // Pausa pra dar tempo de abrir
+                setTimeout(() => { openModal(levelData.mensagemFase); }, 1500); 
+            }
         } else if (currentLevel === 6 && streak >= 3) {
             streak = 0; 
             sfxUp(); 
@@ -580,7 +646,7 @@ function verify() {
         }
         
         document.getElementById('message-area').innerHTML = msg;
-        nextTimer = setTimeout(genSeq, 2000);
+        nextTimer = setTimeout(genSeq, 2500);
     } else {
         streak = 0; 
         updateStats(); 

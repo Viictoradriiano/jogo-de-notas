@@ -1,31 +1,34 @@
 <!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Treino Musical V2.4</title>
-    
+    <title>Treino Musical V2.5 - MSA</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300..700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Music&display=swap" rel="stylesheet">
-    
+
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
     <button class="theme-toggle" id="theme-toggle" aria-label="Alternar tema">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-            <circle cx="12" cy="12" r="5"/>
-            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+            <circle cx="12" cy="12" r="5" />
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
         </svg>
     </button>
 
     <div id="app">
+        
         <div id="screen-menu" class="screen active">
-            <div class="menu-logo">Treino Musical V2</div>
-            <div class="menu-sub">Identifique as Notas, os Tempos e o Compasso no relógio!</div>
-            
+            <div class="menu-logo">Treino Musical V2.5</div>
+            <div class="menu-sub">Identifique as Notas, os Tempos e o Compasso com base no MSA!</div>
+
             <div class="clef-grid">
                 <div class="clef-card" id="btn-clef-sol">
                     <div class="clef-symbol">𝄞</div>
@@ -43,16 +46,43 @@
                     <div class="clef-sub">Pauta média</div>
                 </div>
             </div>
-            
+
             <div class="menu-hint">
                 🎯 Preencha o Compasso, o Nome e a Duração de cada figura gerada!
+            </div>
+
+            <div style="width: 100%; margin-top: var(--space-6); display: flex; flex-direction: column; gap: var(--space-3);">
+                <div style="font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; text-align: center;">
+                    Outros Jogos (MSA)
+                </div>
+
+                <a href="jogo-compasso.html" class="btn-action btn-end"
+                    style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    🧩 Quebra-Cabeça de Compassos
+                </a>
+
+                <a href="jogo-ritmo.html" class="btn-action btn-end"
+                    style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    ⏱️ Desafio da Leitura Rítmica
+                </a>
+
+                <a href="maestro-msa.html" class="btn-action btn-end"
+                    style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    🎼 Maestro do MSA — Identificação de Alturas
+                </a>
+
+                <a href="jogo-regencia.html" class="btn-action btn-end"
+                    style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    🫳 Simulador de Regência — Marcação
+                </a>
+
             </div>
         </div>
 
         <div id="screen-game" class="screen">
             <div class="game-header">
                 <button class="btn-back" id="btn-back-menu">← Menu</button>
-                
+
                 <div class="timer-container">
                     <div id="timer-text" class="timer-text">30s</div>
                     <div class="timer-bar">
@@ -64,7 +94,7 @@
                     <div class="level-badge" id="level-badge">Nível 1</div>
                     <div class="session-stats" id="session-stats">0 ✓ · 0 ✗</div>
                 </div>
-                
+
                 <div class="streak-counter">
                     <div class="streak-pip" id="pip0"></div>
                     <div class="streak-pip" id="pip1"></div>
@@ -78,7 +108,11 @@
 
             <div class="staff-wrapper">
                 <div class="pentagrama" id="pentagrama">
-                    <div class="linha"></div><div class="linha"></div><div class="linha"></div><div class="linha"></div><div class="linha"></div>
+                    <div class="linha"></div>
+                    <div class="linha"></div>
+                    <div class="linha"></div>
+                    <div class="linha"></div>
+                    <div class="linha"></div>
                     <div class="clave" id="clave-symbol"></div>
                     <div class="time-signature">
                         <span id="ts-top">?</span><span id="ts-bottom">?</span>
@@ -94,21 +128,16 @@
             <div id="slots-container"></div>
 
             <fieldset class="keyboard-section">
-                <div class="keyboard-label" style="color: var(--color-warning);">Compasso (Soma dos Tempos)</div>
-                <div class="key-row" id="compass-keyboard-row">
-                    <button class="btn-key btn-compass-key" onclick="handleCompassAnswer('2/4')">2/4</button>
-                    <button class="btn-key btn-compass-key" onclick="handleCompassAnswer('3/4')">3/4</button>
-                    <button class="btn-key btn-compass-key" onclick="handleCompassAnswer('4/4')">4/4</button>
-                    <button class="btn-key btn-compass-key" onclick="handleCompassAnswer('6/8')">6/8</button>
-                </div>
+                <div class="keyboard-label" style="color: var(--color-warning);">Fórmula de Compasso</div>
+                <div class="key-row" id="compass-keyboard-row"></div>
 
                 <div class="keyboard-label">Notas</div>
                 <div class="key-row" id="notes-keyboard-row"></div>
-                
+
                 <div class="keyboard-label" style="color: var(--color-pause);">Pausas</div>
                 <div class="key-row" id="pauses-keyboard-row"></div>
-                
-                <div class="keyboard-label" style="color: var(--color-time);">Duração (Tempos)</div>
+
+                <div class="keyboard-label" style="color: var(--color-time);">Duração (Tempos / Movimentos)</div>
                 <div class="key-row" id="time-keyboard-row"></div>
             </fieldset>
 
@@ -116,7 +145,7 @@
                 <button class="btn-action btn-end" id="btn-end-session">Terminar</button>
                 <button class="btn-action btn-verify" id="btn-verify-answers">Verificar ✓</button>
             </div>
-            
+
             <div id="message-area" aria-live="polite"></div>
         </div>
 
@@ -125,11 +154,11 @@
                 <div class="summary-emoji" id="summary-emoji">🎉</div>
                 <div class="summary-title" id="summary-title">Sessão concluída!</div>
                 <p class="summary-sub" id="summary-sub">Aqui está o seu resumo</p>
-                
+
                 <div class="progress-bar-wrap">
                     <div class="progress-bar-fill" id="summary-bar"></div>
                 </div>
-                
+
                 <div class="stats-grid">
                     <div class="stat-box">
                         <div class="stat-value success" id="stat-acertos">0</div>
@@ -145,8 +174,18 @@
             </div>
             <button class="btn-menu" id="btn-return-menu">Voltar ao Menu</button>
         </div>
+        
+    </div>
+
+    <div id="modal-warning" class="modal-overlay">
+        <div class="modal-content">
+            <h2 id="modal-title" style="margin-bottom: 15px; color: var(--color-primary); font-family: var(--font-display); font-size: 28px;">Atenção!</h2>
+            <p id="modal-text" style="font-size: var(--text-sm); line-height: 1.5; color: var(--color-text); margin-bottom: 20px;"></p>
+            <button onclick="closeModal()" class="btn-verify" style="width: 100%; border-radius: var(--radius-md);">Entendi, vamos lá!</button>
+        </div>
     </div>
 
     <script src="script.js" defer></script>
 </body>
+
 </html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ditado Musical - MSA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Music&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="ditado.css">
+</head>
+<body>
+<div id="app">
+
+    <div id="screen-select" class="screen active">
+        <div class="game-header">
+            <a href="index.html" class="btn-back">← Voltar</a>
+            <div class="badge">Ditado MSA</div>
+            <div style="width:60px"></div>
+        </div>
+        
+        <div class="hero">
+            <div class="hero-icon">👂</div>
+            <div class="hero-title">Ditado Musical</div>
+            <div class="hero-sub">Treine o seu ouvido interno escrevendo as notas que escuta</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">1. Escolha a Clave</div>
+            <div class="clef-grid">
+                <button class="clef-btn selected" onclick="selecionarClave('sol', this)">
+                    <span class="clef-symbol" style="font-family: 'Noto Music'">𝄞</span>
+                    Sol
+                </button>
+                <button class="clef-btn" onclick="selecionarClave('do', this)">
+                    <span class="clef-symbol" style="font-family: 'Noto Music'">𝄡</span>
+                    Dó
+                </button>
+                <button class="clef-btn" onclick="selecionarClave('fa', this)">
+                    <span class="clef-symbol" style="font-family: 'Noto Music'">𝄢</span>
+                    Fá
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">2. Escolha o Nível de Percepção</div>
+            <div class="level-grid">
+                <button class="level-btn selected" onclick="selecionarNivel(1, this)">
+                    <span class="level-icon">🌱</span>
+                    Nível 1
+                    <div class="level-sub">3 Notas Básicas</div>
+                </button>
+                <button class="level-btn" onclick="selecionarNivel(2, this)">
+                    <span class="level-icon">🎵</span>
+                    Nível 2
+                    <div class="level-sub">4 Notas (Com pulsação)</div>
+                </button>
+                <button class="level-btn" onclick="selecionarNivel(3, this)">
+                    <span class="level-icon">🏆</span>
+                    Nível 3
+                    <div class="level-sub">Trechos de Hinos CCB</div>
+                </button>
+            </div>
+        </div>
+
+        <button class="btn btn-success" onclick="iniciarJogo()">Iniciar Ditado ▶️</button>
+    </div>
+
+    <div id="screen-game" class="screen">
+        <div class="game-header">
+            <button class="btn-back" onclick="voltarMenu()">← Menu</button>
+            <div class="badge" id="badge-jogo">Nível 1 · Sol</div>
+            <div class="score-box">Pts: <span id="score">0</span></div>
+        </div>
+
+        <button class="btn btn-listen" id="btn-play-melody" onclick="ouvirMelodia()">
+            🔊 Ouvir Melodia Completa
+        </button>
+
+        <div class="staff-wrap">
+            <div class="staff-hint">Selecione um slot e preencha a altura e duração ↓</div>
+            <svg id="ditado-svg" viewBox="0 0 520 220" xmlns="http://www.w3.org/2000/svg">
+                <text id="clef-symbol-svg" x="15" y="145" font-size="75" fill="#9b7ff0" opacity="0.9" font-family="Noto Music">𝄞</text>
+                
+                <line x1="60" y1="70"  x2="480" y2="70"  class="staff-line"/>
+                <line x1="60" y1="90"  x2="480" y2="90"  class="staff-line"/>
+                <line x1="60" y1="110" x2="480" y2="110" class="staff-line"/>
+                <line x1="60" y1="130" x2="480" y2="130" class="staff-line"/>
+                <line x1="60" y1="150" x2="480" y2="150" class="staff-line"/>
+
+                <g id="slots-group"></g>
+            </svg>
+        </div>
+
+        <div class="keyboard-container">
+            <div class="pad-section">
+                <div class="pad-title">1. Escolha a Altura (Nota)</div>
+                <div class="pad-grid" id="pitch-grid">
+                    <button class="pad-btn" data-pitch="DO">Dó</button>
+                    <button class="pad-btn" data-pitch="RE">Ré</button>
+                    <button class="pad-btn" data-pitch="MI">Mi</button>
+                    <button class="pad-btn" data-pitch="FA">Fá</button>
+                    <button class="pad-btn" data-pitch="SOL">Sol</button>
+                    <button class="pad-btn" data-pitch="LA">Lá</button>
+                    <button class="pad-btn" data-pitch="SI">Si</button>
+                </div>
+            </div>
+
+            <div class="pad-section" style="margin-top: 10px;">
+                <div class="pad-title">2. Escolha a Duração (Figura do MSA)</div>
+                <div class="pad-grid duration-grid" id="duration-grid">
+                    <button class="pad-btn" data-dur="2"><span class="music-font">𝅗𝅥</span> Mínima (2T)</button>
+                    <button class="pad-btn" data-dur="1"><span class="music-font">𝅘𝅥</span> Semínima (1T)</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+
+        <div class="actions-row">
+            <button class="btn btn-success" id="btn-verify" onclick="verificarDitado()">Verificar Resposta ✓</button>
+        </div>
+    </div>
+
+    <div id="screen-summary" class="screen">
+        <div class="summary-card">
+            <div class="summary-emoji" id="sum-emoji">🎉</div>
+            <div class="summary-title">Avaliação do Ditado</div>
+            <div class="summary-pct" id="sum-pct">0%</div>
+            
+            <div class="stats-row">
+                <div class="stat-box"><div class="stat-val" style="color:var(--success)" id="sum-acertos">0</div><div style="font-size:11px;color:#888;margin-top:4px">Notas Certas</div></div>
+                <div class="stat-box"><div class="stat-val" style="color:var(--error)"   id="sum-erros">0</div><div style="font-size:11px;color:#888;margin-top:4px">Incorretas</div></div>
+            </div>
+            
+            <div class="advice-box" style="margin-top:20px; text-align: left;">
+                <div class="advice-title">📚 Análise do Ouvido Interno (MSA)</div>
+                <div id="sum-advice"></div>
+            </div>
+        </div>
+        <button class="btn btn-success" onclick="proximaMelodia()">Próximo Exercício ▶️</button>
+        <button class="btn btn-outline" onclick="voltarMenu()">Mudar Configurações</button>
+    </div>
+
+</div>
+
+<div id="tutorial-modal" class="modal-overlay active">
+    <div class="modal-box">
+        <div class="modal-title">👂 Como Funciona?</div>
+        <div class="modal-body">
+            <p>1️⃣ Clique em **Ouvir a Melodia** para memorizar o trecho musical.</p>
+            <p>2️⃣ Clique nos **espaços pontilhados** na pauta e use os botões para definir a Nota e a Duração.</p>
+            <p>3️⃣ Clique em Verificar! Se errar, o jogo mostrará onde está o erro e lhe dará **mais uma chance** de corrigir.</p>
+        </div>
+        <button class="btn btn-success" onclick="fecharTutorial()">Começar Treino ▶️</button>
+    </div>
+</div>
+
+<script src="ditado.js"></script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maestro do MSA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Music&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="maestro-msa.css">
+</head>
+<body>
+<div id="app">
+
+<div id="screen-select" class="screen active">
+    <div class="game-header">
+        <a href="index.html" class="btn-back">← Voltar</a>
+        <div class="badge">Maestro MSA</div>
+        <div style="width:60px"></div>
+    </div>
+    
+    <div class="hero">
+        <div class="hero-icon">🎼</div>
+        <div class="hero-title">Maestro do MSA</div>
+        <div class="hero-sub">Identifique a altura das notas na pauta</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">1. Escolha sua Clave</div>
+        <div class="clef-grid">
+            <button class="clef-btn selected" onclick="selecionarClave('sol', this)">
+                <span class="clef-symbol" style="font-family: 'Noto Music'">𝄞</span>
+                Clave de Sol
+            </button>
+            <button class="clef-btn" onclick="selecionarClave('do', this)">
+                <span class="clef-symbol" style="font-family: 'Noto Music'">𝄡</span>
+                Clave de Dó
+            </button>
+            <button class="clef-btn" onclick="selecionarClave('fa', this)">
+                <span class="clef-symbol" style="font-family: 'Noto Music'">𝄢</span>
+                Clave de Fá
+            </button>
+        </div>
+        <div id="clef-info" style="font-size:13px; color:var(--primary); margin-top:12px; text-align:center; font-weight:bold;">
+            Sons agudos (2ª linha = Sol)
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">2. Escolha a Fase</div>
+        <div class="phase-grid">
+            <button class="phase-btn selected" onclick="selecionarFase(1,this)">
+                <span class="phase-icon">🌱</span>
+                Fase 1
+                <div class="phase-sub">Notas vizinhas (2ªs)</div>
+            </button>
+            <button class="phase-btn" onclick="selecionarFase(2,this)">
+                <span class="phase-icon">🎵</span>
+                Fase 2
+                <div class="phase-sub">Saltos de 3ª e 4ª</div>
+            </button>
+            <button class="phase-btn" onclick="selecionarFase(3,this)">
+                <span class="phase-icon">🏆</span>
+                Fase 3
+                <div class="phase-sub">Escala Completa</div>
+            </button>
+        </div>
+    </div>
+
+    <button class="btn btn-success" onclick="iniciarJogo()">Iniciar Solfejo ▶️</button>
+</div>
+
+<div id="screen-game" class="screen">
+    <div class="game-header">
+        <button class="btn-back" onclick="voltarMenu()">← Menu</button>
+        <div class="badge" id="badge-jogo">Fase 1 · Sol</div>
+        <div class="score-box">Pts: <span id="score">0</span></div>
+    </div>
+
+    <div>
+        <div class="round-txt" id="round-txt">Rodada 1 de 8</div>
+        <div class="progress-wrap"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+
+    <div class="target-note-display" id="target-note-display">
+        Ache a nota <span id="target-note-name" style="color: var(--primary);">?</span>
+    </div>
+
+    <button class="btn btn-listen" id="btn-listen" onclick="ouvirNota()">
+        🔊 Ouvir Afinação
+    </button>
+
+    <div class="staff-wrap">
+        <div class="staff-hint">Clique na linha ou espaço correspondente ↓</div>
+        
+        <svg id="staff-svg" viewBox="0 0 520 230" xmlns="http://www.w3.org/2000/svg">
+            <text id="clef-symbol" x="15" y="150" font-size="80" fill="#9b7ff0" opacity="0.9" font-family="Noto Music">𝄞</text>
+
+            <line x1="60" y1="80"  x2="500" y2="80"  class="staff-line"/>
+            <line x1="60" y1="100" x2="500" y2="100" class="staff-line"/>
+            <line x1="60" y1="120" x2="500" y2="120" class="staff-line"/>
+            <line x1="60" y1="140" x2="500" y2="140" class="staff-line"/>
+            <line x1="60" y1="160" x2="500" y2="160" class="staff-line"/>
+
+            <g id="hitboxes-group"></g>
+
+            <g id="user-note-group" opacity="0">
+                <line id="user-ledger" x1="0" y1="0" x2="0" y2="0" stroke="#e8e6e1" stroke-width="2"/>
+                <ellipse id="note-user" cx="0" cy="0" rx="11" ry="8" fill="#9b7ff0" class="note-circle"/>
+                <text id="note-user-lbl" x="0" y="0" font-size="10" fill="white" text-anchor="middle" dominant-baseline="central" font-weight="bold"></text>
+            </g>
+
+            <g id="correct-note-group" opacity="0">
+                <line id="correct-ledger" x1="0" y1="0" x2="0" y2="0" stroke="#5baa6e" stroke-width="2"/>
+                <ellipse id="note-correct" cx="0" cy="0" rx="11" ry="8" fill="#5baa6e" class="note-circle"/>
+                <text id="note-correct-lbl" x="0" y="0" font-size="10" fill="white" text-anchor="middle" dominant-baseline="central" font-weight="bold"></text>
+            </g>
+        </svg>
+
+        <div class="note-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--primary)"></div>Sua resposta</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--success)"></div>Posição correta</div>
+        </div>
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+</div>
+
+<div id="screen-summary" class="screen">
+    <div class="summary-card">
+        <div class="summary-emoji" id="sum-emoji">🎵</div>
+        <div class="summary-title" id="summary-title">Leitura Concluída!</div>
+        <div class="summary-pct" id="sum-pct">0%</div>
+        
+        <div class="stats-row">
+            <div class="stat-box"><div class="stat-val" style="color:var(--success)" id="sum-acertos">0</div><div style="font-size:12px;color:#888;margin-top:4px">Acertos</div></div>
+            <div class="stat-box"><div class="stat-val" style="color:var(--error)"   id="sum-erros">0</div><div style="font-size:12px;color:#888;margin-top:4px">Erros</div></div>
+        </div>
+        
+        <div class="advice-box" style="margin-top:20px; text-align: left;">
+            <div class="advice-title">📚 Dica MSA</div>
+            <div id="sum-advice" style="color: var(--text)"></div>
+        </div>
+    </div>
+    <button class="btn btn-success" onclick="jogarNovamente()">Tentar Novamente 🔄</button>
+    <button class="btn btn-outline" onclick="voltarMenu()">Mudar de Clave</button>
+</div>
+
+</div>
+
+<div id="tutorial-modal" class="modal-overlay active">
+    <div class="modal-box">
+        <div class="modal-title">🎼 Como Jogar</div>
+        <div class="modal-body">
+            <p>👁️ <b>Identifique</b> a nota pedida na tela.</p>
+            <p>🎯 <b>Clique</b> na linha ou espaço correto da pauta musical baseando-se na sua clave.</p>
+            <p>🔊 Use o botão de afinação para treinar o seu ouvido interno (Solfejo) antes de clicar.</p>
+        </div>
+        <button class="btn btn-success" onclick="fecharTutorial()">Entendido! ▶️</button>
+    </div>
+</div>
+
+<script src="maestro-msa.js"></script>
+</body>
+</html>

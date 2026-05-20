@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Regência - MSA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="regencia.css">
+</head>
+<body>
+<div id="app">
+
+    <div id="screen-select" class="screen active">
+        <div class="game-header">
+            <a href="index.html" class="btn-back">← Voltar</a>
+            <div class="badge">Regência MSA</div>
+            <div style="width:60px"></div>
+        </div>
+        
+        <div class="hero">
+            <div class="hero-icon">🫳</div>
+            <div class="hero-title">Maestro da Regência</div>
+            <div class="hero-sub">Marque os compassos com as setas do teclado (PC) ou deslizando o dedo (Celular)</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Escolha a Fórmula de Compasso</div>
+            <div class="formula-grid">
+                <button class="formula-btn selected" onclick="selecionarFormula('4/4', this)">
+                    <span class="formula-num">4/4</span>
+                    Quaternário
+                </button>
+                <button class="formula-btn" onclick="selecionarFormula('3/4', this)">
+                    <span class="formula-num">3/4</span>
+                    Ternário
+                </button>
+                <button class="formula-btn" onclick="selecionarFormula('2/4', this)">
+                    <span class="formula-num">2/4</span>
+                    Binário
+                </button>
+            </div>
+        </div>
+
+        <button class="btn btn-success" onclick="iniciarJogo()">Iniciar Solfejo ▶️</button>
+    </div>
+
+    <div id="screen-game" class="screen">
+        <div class="game-header">
+            <button class="btn-back" onclick="voltarMenu()">← Menu</button>
+            <div class="badge" id="badge-jogo">Compasso 4/4</div>
+            <div class="score-box">Pontos: <span id="score">0</span></div>
+        </div>
+
+        <div class="instruction-box">
+            Acompanhe o metrônomo e aperte a <b>Seta do Teclado</b> na direção indicada!
+        </div>
+
+        <div class="gesture-zone" id="gesture-zone">
+            <div class="swipe-hint">PC: Use as Setas ⌨️ | Mobile: Deslize 👆</div>
+            
+            <div class="arrow-container">
+                <div class="arrow arrow-up" id="arrow-up">⬆️</div>
+                <div class="arrow arrow-left" id="arrow-left">⬅️</div>
+                <div class="arrow arrow-right" id="arrow-right">➡️</div>
+                <div class="arrow arrow-down" id="arrow-down">⬇️</div>
+                
+                <div class="center-beat" id="center-beat">1</div>
+            </div>
+        </div>
+
+        <div class="feedback" id="feedback">Toque em COMEÇAR</div>
+        
+        <div class="actions-row">
+            <button class="btn btn-primary" id="btn-action" onclick="acionarMetronomo()">Começar Metrônomo ⏱️</button>
+        </div>
+    </div>
+
+    <div id="screen-summary" class="screen">
+        <div class="summary-card">
+            <div class="summary-emoji" id="sum-emoji">🏆</div>
+            <div class="summary-title">Métrica Concluída!</div>
+            <div class="summary-pct" id="sum-pct">0%</div>
+            
+            <div class="stats-row">
+                <div class="stat-box"><div class="stat-val" style="color:var(--success)" id="sum-acertos">0</div><div style="font-size:12px;color:#888;margin-top:4px">Bons Gestos</div></div>
+                <div class="stat-box"><div class="stat-val" style="color:var(--error)"   id="sum-erros">0</div><div style="font-size:12px;color:#888;margin-top:4px">Erros</div></div>
+            </div>
+            
+            <div class="advice-box" style="margin-top:20px; text-align: left;">
+                <div class="advice-title">📚 Análise do Instrutor (MSA)</div>
+                <div id="sum-advice"></div>
+            </div>
+        </div>
+        <button class="btn btn-success" onclick="jogarNovamente()">Tentar Novamente 🔄</button>
+        <button class="btn btn-outline" onclick="voltarMenu()">Mudar de Compasso</button>
+    </div>
+
+</div>
+
+<div id="tutorial-modal" class="modal-overlay active">
+    <div class="modal-box">
+        <div class="modal-title">🫳 Regência no Teclado</div>
+        <div class="modal-body">
+            <p>💻 <b>No Computador:</b> Use as <b>Setas do Teclado</b> (ou W, A, S, D) na direção que a seta da tela indicar.</p>
+            <p>📱 <b>No Celular:</b> Deslize o dedo pela tela.</p>
+            <p>1️⃣ O movimento (ou o clique na seta) deve ser feito <b>exatamente no instante do Bipe</b>.</p>
+            <p>2️⃣ Antecipar demais ou atrasar fará você perder pontos de ritmo.</p>
+        </div>
+        <button class="btn btn-success" onclick="fecharTutorial()">Entendi! ▶️</button>
+    </div>
+</div>
+
+<script src="regencia.js"></script>
+</body>
+</html>

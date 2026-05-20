@@ -1,0 +1,66 @@
+:root {
+    --font-display: 'Instrument Serif', Georgia, serif;
+    --font-body: 'DM Sans', sans-serif;
+    --color-bg: #110f0e; --color-surface: #1a1816;
+    --color-border: #2e2b27; --color-text: #e8e6e1;
+    --color-primary: #9b7ff0; --color-success: #5baa6e; 
+    --color-error: #e5696f; --color-warning: #e8a633;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-body); background: var(--color-bg); color: var(--color-text); display: flex; justify-content: center; padding: 20px; user-select: none; overflow: hidden; }
+#app { width: 100%; max-width: 600px; display: flex; flex-direction: column; gap: 15px; }
+
+.game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.btn-back { color: var(--color-text); text-decoration: none; padding: 8px 12px; border: 1px solid var(--color-border); border-radius: 8px; font-size: 14px; }
+.level-badge { background: #2d2545; color: var(--color-primary); padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: bold; text-transform: uppercase; }
+
+.rhythm-display { background: var(--color-surface); padding: 15px; border-radius: 12px; border: 2px solid var(--color-border); position: relative; }
+.bpm-indicator { position: absolute; top: 10px; right: 15px; font-weight: bold; color: var(--color-primary); font-size: 12px; z-index: 10; }
+
+.track-container { width: 100%; height: 140px; background: #0a0908; position: relative; overflow: hidden; border-radius: 8px; border: 1px solid #3a3632; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); margin-top: 20px;}
+.hit-zone { position: absolute; left: 80px; top: 0; bottom: 0; width: 4px; background: var(--color-warning); box-shadow: 0 0 15px var(--color-warning), 0 0 5px white; z-index: 5; }
+.hit-zone.active { background: white; width: 6px; box-shadow: 0 0 25px white, 0 0 10px var(--color-primary); }
+
+#track-area { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+.note-container { position: absolute; top: 30px; height: 80px; display: flex; align-items: center; z-index: 2; }
+.note-head { font-family: 'Noto Music'; font-size: 55px; color: white; text-shadow: 2px 2px 0 #000; z-index: 3; position: absolute; left: -15px; top: -10px;}
+.note-name { position: absolute; top: 55px; left: -5px; font-size: 14px; font-weight: bold; color: var(--color-warning); text-shadow: 1px 1px 2px black; z-index: 4; text-transform: uppercase;}
+.note-tail { height: 16px; background: linear-gradient(90deg, var(--color-primary), transparent); border-radius: 8px; margin-left: 10px; opacity: 0.8; }
+
+.note-container.hit .note-head { color: var(--color-success); transform: scale(1.2); }
+.note-container.miss .note-head { color: var(--color-error); opacity: 0.4; }
+.note-container.miss .note-name { color: var(--color-error); }
+.note-container.holding .note-tail { background: linear-gradient(90deg, var(--color-success), var(--color-primary)); filter: brightness(1.5); }
+.note-container.holding .note-name { color: var(--color-success); transform: scale(1.3); }
+
+.feedback-text { text-align: center; font-size: 32px; font-weight: bold; height: 40px; font-family: var(--font-display); letter-spacing: 2px; color: var(--color-warning); text-transform: uppercase;}
+
+.btn-tap { width: 100%; height: 120px; border-radius: 20px; background: #2d2545; border: 4px solid var(--color-primary); color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; user-select: none; touch-action: none; }
+.btn-tap:active, .btn-tap.holding { transform: scale(0.95); background: var(--color-primary); border-color: white; }
+.tap-text { font-size: 28px; font-weight: bold; letter-spacing: 2px; }
+
+.actions-row { display: flex; width: 100%; margin-top: 10px; }
+.btn-action { width: 100%; padding: 15px; border-radius: 10px; font-size: 18px; font-weight: bold; border: none; cursor: pointer; }
+.btn-verify { background: var(--color-success); color: white; }
+
+/* MODAL */
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.8); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+.modal-overlay.active { display: flex; }
+.modal-content { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 20px; padding: 25px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+/* Classes de Controle de Tela e Resumo */
+.screen { display: none; width: 100%; }
+.screen.active { display: flex; flex-direction: column; }
+
+.summary-card { background: var(--color-surface); padding: 30px 20px; border-radius: 16px; border: 1px solid var(--color-border); width: 100%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.summary-emoji { font-size: 50px; margin-bottom: 10px; }
+.summary-title { font-family: var(--font-display); font-size: 28px; color: var(--color-primary); margin-bottom: 5px; }
+.stats-grid { display: flex; gap: 15px; justify-content: center; margin-bottom: 20px; }
+.stat-box { background: #211f1d; padding: 15px; border-radius: 10px; width: 100px; }
+.stat-value { font-size: 28px; font-weight: bold; }
+.success { color: var(--color-success); }
+.error { color: var(--color-error); }
+.feedback-box { background: #211f1d; border: 1px solid var(--color-primary); padding: 15px; border-radius: 10px; font-size: 14px; line-height: 1.5; text-align: left; color: #e8e6e1; }
+

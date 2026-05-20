@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio Rítmico - MSA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Music&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="ritmo.css">
+</head>
+<body>
+    <div id="app">
+        <div id="screen-game" class="screen active">
+            <div class="game-header">
+                <a href="index.html" class="btn-back">← Voltar</a>
+                <div class="level-badge" id="level-display">Hino 1</div>
+                <div class="streak-counter">Pontos: <span id="score">0</span></div>
+            </div>
+
+            <div class="rhythm-display">
+                <div class="bpm-indicator" id="bpm-display">BPM: 60</div>
+                
+                <div class="track-container">
+                    <div class="hit-zone" id="hit-zone"></div>
+                    <div id="track-area"></div>
+                </div>
+            </div>
+
+            <div id="feedback-area" class="feedback-text">Prepare-se...</div>
+
+            <button class="btn-tap" id="btn-tap">
+                <div class="tap-text">TAP / SEGURAR</div>
+                <div class="tap-sub">(ou Barra de Espaços)</div>
+            </button>
+
+            <div class="actions-row">
+                <button class="btn-action btn-verify" id="btn-start" onclick="iniciarRodada()">Começar ▶️</button>
+            </div>
+        </div>
+
+        <div id="screen-summary" class="screen">
+            <div class="summary-card">
+                <div class="summary-emoji" id="summary-emoji">🎵</div>
+                <div class="summary-title" id="summary-title">Hino Concluído!</div>
+                
+                <div style="font-size: 48px; font-weight: bold; color: var(--color-primary); margin: 20px 0;" id="final-pct">100%</div>
+                
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-value success" id="stat-acertos">0</div>
+                        <div class="stat-label">Acertos</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value error" id="stat-erros">0</div>
+                        <div class="stat-label">Erros</div>
+                    </div>
+                </div>
+
+                <div class="feedback-box" style="margin-top: 15px; border-color: var(--color-primary);">
+                    <h3 style="margin-bottom: 10px; font-size: 16px; color: var(--color-primary);">📚 Dica de Estudo (MSA)</h3>
+                    <p id="final-advice" style="font-size: 14px; line-height: 1.5; text-align: left;"></p>
+                </div>
+            </div>
+            <button class="btn-action btn-verify" style="width: 100%;" onclick="proximoHino()">Próximo Hino ▶️</button>
+        </div>
+    </div>
+
+    <div id="tutorial-modal" class="modal-overlay active">
+        <div class="modal-content">
+            <h2 style="color: var(--color-primary); font-family: var(--font-display); font-size: 32px; margin-bottom: 15px;">Como Jogar</h2>
+            <div style="text-align: left; font-size: 15px; line-height: 1.6; margin-bottom: 20px; color: var(--color-text);">
+                <p style="margin-bottom: 15px;">
+                    🎯 <b>Notas Curtas:</b> Dê um toque rápido na Barra de Espaços.
+                </p>
+                <p>
+                    🫱 <b>Notas Longas:</b> Aperte e <b>SEGURE</b> até a cauda da nota passar completamente pela linha amarela!
+                </p>
+            </div>
+            <button class="btn-action btn-verify" onclick="fecharTutorial()">Começar o Louvor</button>
+        </div>
+    </div>
+
+    <script src="ritmo.js"></script>
+</body>
+</html>

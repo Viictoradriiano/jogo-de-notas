@@ -1035,3 +1035,26 @@ button:disabled {
     .actions-row { margin-bottom: 0; gap: var(--space-2); }
     .btn-action { min-height: 42px; padding: var(--space-2); font-size: 14px; }
 }
+
+/* ==========================================
+   MODAL DE AVISO E EXPLICAÇÕES (MSA)
+   ========================================== */
+.modal-overlay {
+    display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.7); z-index: 1000; justify-content: center;
+    align-items: center; backdrop-filter: blur(3px);
+}
+.modal-overlay.active { display: flex; animation: fadeIn 0.3s; }
+.modal-content {
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl); padding: var(--space-6); width: 90%;
+    max-width: 400px; box-shadow: var(--shadow-lg); text-align: center;
+    transform: scale(0.95); animation: scaleUp 0.3s forwards;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes scaleUp { to { transform: scale(1); } }
+
+.msg-error-item small {
+    display: block; margin-top: 6px; font-size: 13px; color: var(--color-text-muted);
+    font-style: italic; background: var(--color-surface-offset); padding: 8px; border-radius: 6px;
+}

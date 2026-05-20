@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quebra-Cabeça de Compassos - MSA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Music&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="compasso.css"> 
+</head>
+<body>
+    <div id="app">
+        <div id="screen-game" class="screen active">
+            <div class="game-header">
+                <a href="index.html" class="btn-back">← Voltar</a>
+                
+                <div class="header-center">
+                    <div class="level-badge" id="level-badge">Nível 1</div>
+                </div>
+                
+                <div class="streak-counter">
+                    <div class="streak-pip" id="pip0"></div>
+                    <div class="streak-pip" id="pip1"></div>
+                    <div class="streak-pip" id="pip2"></div>
+                </div>
+            </div>
+
+            <div class="timer-container" id="timer-container" style="display: none;">
+                <div id="timer-text" class="timer-text">30s</div>
+                <div class="timer-bar"><div id="timer-bar-fill" class="timer-bar-fill"></div></div>
+            </div>
+
+            <div class="instruction-box">
+                Preencha o compasso com as figuras corretas até atingir a soma exata exigida pela fórmula!
+            </div>
+
+            <div class="target-area">
+                <div class="time-signature-display" id="target-signature">4/4</div>
+                <div class="measure-container" id="measure-slots"></div>
+            </div>
+
+            <div id="message-area"></div>
+
+            <div class="keyboard-section">
+                <div class="keyboard-label">Toque para adicionar ao compasso</div>
+                <div class="key-row" id="notes-bank"></div>
+            </div>
+
+            <div class="actions-row">
+                <button class="btn-action btn-end" onclick="limparCompasso()">Limpar 🗑️</button>
+                <button class="btn-action btn-verify" onclick="verificarCompasso()">Verificar ✓</button>
+                <button class="btn-action btn-end" onclick="endSession()" style="flex: 0.5;">Sair</button>
+            </div>
+        </div>
+
+        <div id="screen-summary" class="screen">
+            <div class="summary-card">
+                <div class="summary-emoji" id="summary-emoji">🎉</div>
+                <div class="summary-title" id="summary-title">Sessão concluída!</div>
+                <p class="summary-sub" id="summary-sub">Aqui está o seu diagnóstico</p>
+                
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-value success" id="stat-acertos">0</div>
+                        <div class="stat-label">Acertos</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value error" id="stat-erros">0</div>
+                        <div class="stat-label">Erros</div>
+                    </div>
+                </div>
+
+                <div class="feedback-box" id="feedback-msa"></div>
+                
+                <button class="btn-verify" style="width: 100%; padding: 15px; border-radius: 10px; margin-top: 20px; font-weight: bold; border: none;" onclick="location.reload()">Jogar Novamente</button>
+                <a href="index.html" class="btn-end" style="display: block; width: 100%; padding: 15px; border-radius: 10px; margin-top: 10px; text-decoration: none; text-align: center; font-weight: bold;">Voltar ao Menu Principal</a>
+            </div>
+        </div>
+    </div>
+    <script src="compasso.js"></script>
+</body>
+</html>

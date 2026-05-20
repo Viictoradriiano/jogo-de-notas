@@ -1,0 +1,75 @@
+:root {
+    --font-display: 'Instrument Serif', Georgia, serif;
+    --font-body: 'DM Sans', sans-serif;
+    --color-bg: #110f0e; --color-surface: #1a1816;
+    --color-border: #2e2b27; --color-text: #e8e6e1;
+    --color-primary: #9b7ff0; --color-primary-hover: #b399f6;
+    --color-success: #5baa6e; --color-success-bg: #1b2e1f;
+    --color-error: #e5696f; --color-error-bg: #2e1618;
+    --color-warning: #e8a633;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-body); background: var(--color-bg); color: var(--color-text); display: flex; justify-content: center; padding: 20px; }
+#app { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 20px; }
+
+.screen { display: none; flex-direction: column; gap: 20px; animation: fadeUp 0.3s; }
+.screen.active { display: flex; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.game-header { display: flex; justify-content: space-between; align-items: center; }
+.btn-back { color: var(--color-text); text-decoration: none; padding: 8px 12px; border: 1px solid var(--color-border); border-radius: 8px; font-size: 14px; }
+.level-badge { background: #2d2545; color: var(--color-primary); padding: 6px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; text-transform: uppercase; }
+
+.streak-counter { display: flex; gap: 5px; }
+.streak-pip { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--color-border); transition: 0.3s; }
+.streak-pip.filled { background: var(--color-primary); border-color: var(--color-primary); box-shadow: 0 0 8px var(--color-primary); }
+
+/* Temporizador */
+.timer-container { width: 100%; display: flex; flex-direction: column; align-items: center; }
+.timer-text { font-family: var(--font-display); font-size: 24px; font-weight: bold; color: var(--color-error); margin-bottom: 5px; }
+.timer-bar { width: 100%; height: 8px; background: var(--color-surface); border-radius: 10px; overflow: hidden; border: 1px solid var(--color-border); }
+.timer-bar-fill { height: 100%; background: var(--color-error); width: 100%; transition: width 1s linear; }
+
+.instruction-box { background: var(--color-surface); padding: 15px; border-radius: 10px; font-size: 14px; text-align: center; border: 1px solid var(--color-warning); color: var(--color-warning); }
+.target-area { display: flex; align-items: center; background: var(--color-surface); border: 2px dashed var(--color-border); border-radius: 12px; padding: 20px; min-height: 120px; gap: 15px; }
+.time-signature-display { font-family: var(--font-display); font-size: 48px; font-weight: bold; color: var(--color-primary); display: flex; flex-direction: column; align-items: center; line-height: 0.8; padding-right: 15px; border-right: 2px solid var(--color-border); }
+.measure-container { display: flex; flex-wrap: wrap; gap: 10px; flex: 1; align-items: center; }
+.note-slot { width: 45px; height: 60px; background: rgba(255,255,255,0.05); border-radius: 8px; display: flex; justify-content: center; align-items: center; font-family: 'Noto Music'; font-size: 40px; cursor: pointer; border: 1px solid transparent; transition: 0.2s; animation: pop 0.2s; }
+.note-slot:hover { border-color: var(--color-error); background: var(--color-error-bg); }
+
+@keyframes pop { 0% { transform: scale(0.8); } 100% { transform: scale(1); } }
+
+.keyboard-section { background: var(--color-surface); padding: 15px; border-radius: 12px; border: 1px solid var(--color-border); }
+.keyboard-label { font-size: 12px; color: #8a8880; margin-bottom: 10px; text-transform: uppercase; }
+.key-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.btn-note { font-family: 'Noto Music'; font-size: 32px; width: 60px; height: 60px; border-radius: 10px; background: #211f1d; border: 1px solid var(--color-border); color: var(--color-text); cursor: pointer; transition: 0.2s; }
+.btn-note:hover { background: var(--color-primary); border-color: var(--color-primary); }
+.btn-note:active { transform: scale(0.9); }
+
+.actions-row { display: flex; gap: 10px; }
+.btn-action { flex: 1; padding: 15px; border-radius: 10px; font-size: 16px; font-weight: bold; border: none; cursor: pointer; transition: 0.2s; }
+.btn-end { background: transparent; border: 1px solid var(--color-border); color: var(--color-text); }
+.btn-end:hover { background: var(--color-error-bg); border-color: var(--color-error); color: var(--color-error); }
+.btn-verify { background: var(--color-primary); color: white; }
+.btn-verify:hover { background: var(--color-primary-hover); }
+
+#message-area { text-align: center; min-height: 24px; font-size: 14px; }
+.msg-success { color: var(--color-success); background: var(--color-success-bg); padding: 10px; border-radius: 8px; border: 1px solid var(--color-success); }
+.msg-error { color: var(--color-error); background: var(--color-error-bg); padding: 10px; border-radius: 8px; border: 1px solid var(--color-error); }
+.msg-error small { display: block; margin-top: 10px; font-size: 13.5px; color: #e8e6e1; background: rgba(0,0,0,0.25); padding: 12px; border-radius: 6px; text-align: left; line-height: 1.5; border-left: 3px solid var(--color-warning); }
+
+/* Resumo Final */
+.summary-card { background: var(--color-surface); padding: 30px 20px; border-radius: 15px; text-align: center; border: 1px solid var(--color-border); }
+.summary-emoji { font-size: 50px; margin-bottom: 10px; }
+.summary-title { font-family: var(--font-display); font-size: 28px; color: var(--color-primary); margin-bottom: 5px; }
+.summary-sub { color: #8a8880; font-size: 14px; margin-bottom: 20px; }
+.stats-grid { display: flex; gap: 15px; justify-content: center; margin-bottom: 20px; }
+.stat-box { background: #211f1d; padding: 15px; border-radius: 10px; width: 100px; }
+.stat-value { font-size: 28px; font-weight: bold; }
+.success { color: var(--color-success); }
+.error { color: var(--color-error); }
+.feedback-box { background: #211f1d; border: 1px solid var(--color-primary); padding: 15px; border-radius: 10px; font-size: 14px; line-height: 1.5; text-align: left; color: #e8e6e1; }
+
+.confetti-piece { position: fixed; width: 10px; height: 10px; pointer-events: none; z-index: 9999; border-radius: 2px; animation: confetti-fall 1.5s ease-in forwards; }
+@keyframes confetti-fall { 0% { transform: translateY(-20px) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
